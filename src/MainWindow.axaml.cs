@@ -1,12 +1,14 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Collections.ObjectModel;
+using TodoListApp.Models;
 
 namespace TodoListApp;
 
 public partial class MainWindow : Window
 {
-    private ObservableCollection<string> _tasks = new();
+    private ObservableCollection<TaskItem> _tasks = new();
+    private int _nextId = 1;
 
     public MainWindow()
     {
@@ -19,16 +21,22 @@ public partial class MainWindow : Window
 
     private void OnAddClick(object? sender, RoutedEventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(TaskInput.Text))
+        var taskText = TaskInput.Text?.Trim();
+        if (!string.IsNullOrWhiteSpace(taskText))
         {
-            _tasks.Add(TaskInput.Text);
+            _tasks.Add(new TaskItem
+            {
+                Id = _nextId++,
+                Title = taskText,
+                IsCompleted = false
+            });
             TaskInput.Text = string.Empty;
         }
     }
 
     private void OnDeleteClick(object? sender, RoutedEventArgs e)
     {
-        if (TaskList.SelectedItem is string selected)
+        if (TaskList.SelectedItem is TaskItem selected)
         {
             _tasks.Remove(selected);
         }
